@@ -1,0 +1,1 @@
+{"params": {"learning_rate": 0.01, "dropout": 0.5, "n1": 256, "n2": 128, "epochs": 1, "batches_size": 100}, "train_loss": [1.848637293378512], "train_accuracy": [1.1948068714141846], "valid_loss": [0.34715], "valid_accuracy": [0.6129]}
