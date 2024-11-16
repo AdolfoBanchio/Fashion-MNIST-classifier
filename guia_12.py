@@ -69,6 +69,7 @@ def train_configurations(configurations, fashion_dataset, validation_dataset):
         model_path = f"./models/{conf_name}.pt"
         torch.save(model, model_path)
         results = {
+            "params": conf_params,
             "train_loss_inc": train_loss_inc,
             "train_loss": train_loss,
             "valid_loss": valid_loss,
@@ -100,7 +101,7 @@ configurations = {
         "dropout": 0.2,
         "n1": 128,
         "n2": 64,
-        "epochs": 40,
+        "epochs": 50,
         "batches_size": 100
     },
     "conf_3": {
@@ -110,6 +111,47 @@ configurations = {
         "n2": 64,
         "epochs": 50,
         "batches_size": 100
+    },
+    "conf_4": {
+        "learning_rate": 1e-3,
+        "dropout": 0.5,
+        "n1": 256,
+        "n2": 128,
+        "epochs": 50,
+        "batches_size": 100
+    },
+    "conf_5": {
+        "learning_rate": 1e-3,
+        "dropout": 0.2,
+        "n1": 256,
+        "n2": 128,
+        "epochs": 50,
+        "batches_size": 100
+    },
+
+    "conf_6": {
+        "learning_rate": 0.005,
+        "dropout": 0.5,
+        "n1": 128,
+        "n2": 64,
+        "epochs": 50,
+        "batches_size": 100
+    },
+    "conf_7": {
+        "learning_rate": 0.005,
+        "dropout": 0.5,
+        "n1": 128,
+        "n2": 64,
+        "epochs": 50,
+        "batches_size": 60
+    },
+    "conf_8": {
+        "learning_rate": 0.005,
+        "dropout": 0.5,
+        "n1": 256,
+        "n2": 128,
+        "epochs": 50,
+        "batches_size": 60
     }
 }
 
