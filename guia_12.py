@@ -53,9 +53,32 @@ def train_model(params, t_dataset, v_dataset):
     criterion = nn.CrossEntropyLoss()
 
     # train the model
-    train_loss, train_accuracy, valid_loss, valid_accuracy = fashion_classifier.train_fashionMNIST_classifier(model, train_loader, valid_loader, optimizer, criterion, epochs)
+    train_loss_inc, train_loss, valid_loss, train_acc_inc, train_acc, valid_acc  = fashion_classifier.train_fashionMNIST_classifier(model, train_loader, valid_loader, optimizer, criterion, epochs)
 
-    return model, train_loss, train_accuracy, valid_loss, valid_accuracy
+    return model, train_loss_inc, train_loss, valid_loss, train_acc_inc, train_acc, valid_acc
+
+def train_configurations(configurations, fashion_dataset, validation_dataset):
+    # train the 3 different configurations
+    for conf_name, conf_params in configurations.items():
+        print(f"Training configuration: {conf_name}")
+        print(f"Parameters: {conf_params}")
+        
+        model, train_loss_inc, train_loss, valid_loss, train_acc_inc, train_acc, valid_acc = train_model(conf_params, fashion_dataset, validation_dataset)
+
+        # save the model and the results
+        model_path = f"./models/{conf_name}.pt"
+        torch.save(model, model_path)
+        results = {
+            "train_loss_inc": train_loss_inc,
+            "train_loss": train_loss,
+            "valid_loss": valid_loss,
+            "train_acc_inc": train_acc_inc,
+            "train_acc": train_acc,
+            "valid_acc": valid_acc
+        }
+        results_path = f"./results/{conf_name}_results.json"
+        with open(results_path, 'w') as f:
+            json.dump(results, f)
 
 # get the MNIST dataset from pytorch
 transformer = transforms.ToTensor()
@@ -63,7 +86,7 @@ fashion_dataset = datasets.FashionMNIST(root='./data/fashion/',train=True, downl
 validation_dataset = datasets.FashionMNIST(root='./data/fashion/',train=False, download=True, transform=transformer)
 
 # define the parameters for the different configurations
-train_configurations = {
+configurations = {
     "conf_1": {
         "learning_rate": 1e-3,
         "dropout": 0.2,
@@ -90,24 +113,4 @@ train_configurations = {
     }
 }
 
-# train the 3 different configurations
-for conf_name, conf_params in train_configurations.items():
-    print(f"Training configuration: {conf_name}")
-    print(f"Parameters: {conf_params}")
-    
-    model, train_loss_inc, train_loss, valid_loss, train_acc_inc, train_acc, valid_acc = train_model(conf_params, fashion_dataset, validation_dataset)
-
-    # save the model and the results
-    model_path = f"./models/{conf_name}.pt"
-    torch.save(model, model_path)
-    results = {
-        "train_loss_inc": train_loss_inc,
-        "train_loss": train_loss,
-        "valid_loss": valid_loss,
-        "train_acc_inc": train_acc_inc,
-        "train_acc": train_acc,
-        "valid_acc": valid_acc
-    }
-    results_path = f"./results/{conf_name}_results.json"
-    with open(results_path, 'w') as f:
-        json.dump(results, f)
+train_configurations(configurations, fashion_dataset, validation_dataset)
