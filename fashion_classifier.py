@@ -67,8 +67,6 @@ def train_batches_fashionMNIST_classifier(model, train_loader, optimizer, criter
       # Calculamos la cantidad total de predicciones procesadas
       num_processed_examples += batch_size
       # Mostramos el progreso del entrenamiento
-      if batch_number % 100 == 0:
-          print(f"Batch {batch_number}: Loss: {batch_avg_loss:.4f}")
   # Calculamos la perdida promedio de todos los batches
   avg_loss = sum_batch_avg_loss / len(train_loader)
   # Calculamos la precisión del modelo

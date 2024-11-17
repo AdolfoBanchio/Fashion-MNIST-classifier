@@ -46,6 +46,13 @@ def train_model(params, t_dataset, v_dataset):
     # create the model
     model = fashion_classifier.FashionMNISTClassifier(n1,n2,dropout)
 
+    # send model to GPU if available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    # set workers to 2
+    torch.set_num_threads(2)
+    
     # create the optimizer
     optimizer = optim.SGD(model.parameters(), lr=lr)
 
