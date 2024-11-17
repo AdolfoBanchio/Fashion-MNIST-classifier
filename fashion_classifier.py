@@ -42,46 +42,72 @@ def train_batches_fashionMNIST_classifier(model, train_loader, optimizer, criter
   - avg entropy loss
   - avg accuracy
   """
-  model.train()
-  num_samples = len(train_loader.dataset)
-  num_batches = len(train_loader)
-  train_total_entropy_loss = 0
-  train_total_accuracy = 0
-  
-  for images, labels in train_loader:
-    optimizer.zero_grad()
-    pred = model(images)
-    loss = criterion(pred, labels)
-    loss.backward()
-    optimizer.step()
-
-    train_total_entropy_loss += loss.item()
-    
-    train_total_accuracy += (pred.argmax(1) == labels).type(torch.float).sum().item()
-
-  avg_entropy_loss = train_total_entropy_loss/num_batches
-  avg_accuracy = train_total_accuracy/num_samples
-  return avg_entropy_loss, avg_accuracy
+  model.train() # Se pone el modelo en modo de entrenamiento
+  sum_batch_avg_loss = 0 # Inicializamos la suma de las pérdidas promedio de los batches
+  sum_correct = 0 # Inicializamos la suma de las predicciones correctas
+  num_processed_examples = 0 # Inicializamos la cantidad de ejemplos procesados
+  for batch_number, (images, labels) in enumerate(train_loader):
+          
+      # image = images.to(device) # Se envía la imagen al dispositivo
+      # labels = labels.to(device) # Se envía la etiqueta al dispositivo
+      batch_size = len(images) # Se obtiene el tamaño del lote
+      # Se obtiene la predicción del modelo y se calcula la pérdida 
+      pred = model(images)
+      loss = criterion(pred, labels)
+      
+      # Backpropagation usando el optimizador 
+      optimizer.zero_grad()
+      loss.backward()
+      optimizer.step()
+      # Calculamos la perdida promedio del batch y lo agregamos a la suma total
+      batch_avg_loss = loss.item() 
+      sum_batch_avg_loss += batch_avg_loss
+      # Calculamos la cantidad de predicciones correctas
+      sum_correct += (pred.argmax(1) == labels).sum().item()
+      # Calculamos la cantidad total de predicciones procesadas
+      num_processed_examples += batch_size
+      # Mostramos el progreso del entrenamiento
+      if batch_number % 100 == 0:
+          print(f"Batch {batch_number}: Loss: {batch_avg_loss:.4f}")
+  # Calculamos la perdida promedio de todos los batches
+  avg_loss = sum_batch_avg_loss / len(train_loader)
+  # Calculamos la precisión del modelo
+  accuracy = sum_correct / len(train_loader.dataset)
+  return avg_loss, accuracy 
 
 
 def valid_batches_fashionMNIST_classifier(model, valid_loader, criterion):
-  validation_entropy_loss = 0
-  validation_accuracy = 0
+    model.eval() # Se pone el modelo en modo de evaluación
 
-  num_samples = len(valid_loader.dataset)
-  num_batches = len(valid_loader)
+    sum_batch_avg_loss = 0 # Inicializamos la suma de las pérdidas promedio de los batches
+    sum_correct = 0 # Inicializamos la suma de las predicciones correctas
+    num_processed_examples = 0 # Inicializamos la cantidad de ejemplos procesados
 
-  model.eval()
-  with torch.no_grad():
-    for images, labels in valid_loader:
-      pred = model(images)
-      loss = criterion(pred, labels)
-      validation_entropy_loss += loss.item()
-      validation_accuracy += (pred.argmax(1) == labels).type(torch.float).sum().item() # calculate the accuracy of batch
+    for batch_number, (images, labels) in enumerate(valid_loader):
+        # image = images.to(device) # Se envía la imagen al dispositivo
+        # labels = labels.to(device) # Se envía la etiqueta al dispositivo
+        batch_size = len(images)
 
-  avg_entropy_loss = validation_entropy_loss/num_batches
-  avg_accuracy = validation_accuracy/num_samples
-  return avg_entropy_loss, avg_accuracy
+        # Se obtiene la predicción del modelo y se calcula la pérdida
+        pred = model(images)
+        loss = criterion(pred, labels)
+
+        # Calculamos la perdida promedio del batch y lo agregamos a la suma total
+        batch_avg_loss = loss.item()
+        sum_batch_avg_loss += batch_avg_loss
+
+        # Calculamos la cantidad de predicciones correctas
+        sum_correct += (pred.argmax(1) == labels).sum().item()
+        
+        # Calculamos la cantidad total de predicciones procesadas
+        num_processed_examples += batch_size
+
+    # Calculamos la perdida promedio de todos los batches
+    avg_loss = sum_batch_avg_loss / len(valid_loader)
+    # Calculamos la precisión del modelo
+    accuracy = sum_correct / len(valid_loader.dataset)
+
+    return avg_loss, accuracy
 
 
 def train_fashionMNIST_classifier(model, train_loader, valid_loader, optimizer, criterion, epochs):

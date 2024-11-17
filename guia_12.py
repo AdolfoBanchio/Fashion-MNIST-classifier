@@ -101,7 +101,7 @@ configurations = {
         "dropout": 0.2,
         "n1": 128,
         "n2": 64,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 100
     },
     "conf_3": {
@@ -109,7 +109,7 @@ configurations = {
         "dropout": 0.5,
         "n1": 128,
         "n2": 64,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 100
     },
     "conf_4": {
@@ -117,7 +117,7 @@ configurations = {
         "dropout": 0.5,
         "n1": 256,
         "n2": 128,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 100
     },
     "conf_5": {
@@ -125,7 +125,7 @@ configurations = {
         "dropout": 0.2,
         "n1": 256,
         "n2": 128,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 100
     },
 
@@ -134,7 +134,7 @@ configurations = {
         "dropout": 0.5,
         "n1": 128,
         "n2": 64,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 100
     },
     "conf_7": {
@@ -142,7 +142,7 @@ configurations = {
         "dropout": 0.5,
         "n1": 128,
         "n2": 64,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 60
     },
     "conf_8": {
@@ -150,7 +150,7 @@ configurations = {
         "dropout": 0.5,
         "n1": 256,
         "n2": 128,
-        "epochs": 50,
+        "epochs": 60,
         "batches_size": 60
     }
 }
