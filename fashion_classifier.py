@@ -47,9 +47,11 @@ def train_batches_fashionMNIST_classifier(model, train_loader, optimizer, criter
   sum_correct = 0 # Inicializamos la suma de las predicciones correctas
   num_processed_examples = 0 # Inicializamos la cantidad de ejemplos procesados
   for batch_number, (images, labels) in enumerate(train_loader):
-          
-      # image = images.to(device) # Se envía la imagen al dispositivo
-      # labels = labels.to(device) # Se envía la etiqueta al dispositivo
+      device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+      images = images.to(device) # Se envía la imagen al dispositivo
+      labels = labels.to(device) # Se envía la etiqueta al dispositivo
+
       batch_size = len(images) # Se obtiene el tamaño del lote
       # Se obtiene la predicción del modelo y se calcula la pérdida 
       pred = model(images)
@@ -82,8 +84,11 @@ def valid_batches_fashionMNIST_classifier(model, valid_loader, criterion):
     num_processed_examples = 0 # Inicializamos la cantidad de ejemplos procesados
 
     for batch_number, (images, labels) in enumerate(valid_loader):
-        # image = images.to(device) # Se envía la imagen al dispositivo
-        # labels = labels.to(device) # Se envía la etiqueta al dispositivo
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        images = images.to(device) # Se envía la imagen al dispositivo
+        labels = labels.to(device) # Se envía la etiqueta al dispositivo
+      
         batch_size = len(images)
 
         # Se obtiene la predicción del modelo y se calcula la pérdida

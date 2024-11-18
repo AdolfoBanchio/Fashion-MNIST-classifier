@@ -8,23 +8,11 @@ from torchvision import datasets
 from torchvision import transforms
 from torchvision.io import read_image
 from torchvision.transforms import ToTensor, Lambda, Compose
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import numpy as np
-import scipy as sp
-import scipy.linalg as linalg
 #import dill
 import json
-from collections import defaultdict
-from tqdm import tqdm
-from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
-import copy 
-import logging
-
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+import os
 
 def train_model(params, t_dataset, v_dataset):
-    logging.debug(f"Starting training with params: {params}")
     """ 
     Trains and verifies a fashion_mnist classifier model with the given parameters
 
@@ -40,8 +28,8 @@ def train_model(params, t_dataset, v_dataset):
     n2 = params['n2']
     epochs = params['epochs']
     batches_size = params['batches_size']
-    train_loader = DataLoader(t_dataset,batch_size=batches_size, shuffle=True)
-    valid_loader = DataLoader(v_dataset,batch_size=batches_size, shuffle=True)
+    train_loader = DataLoader(t_dataset,batch_size=batches_size, shuffle=True, num_workers=os.cpu_count()-1)
+    valid_loader = DataLoader(v_dataset,batch_size=batches_size, shuffle=True, num_workers=os.cpu_count()-1)
 
     # create the model
     model = fashion_classifier.FashionMNISTClassifier(n1,n2,dropout)
@@ -54,7 +42,8 @@ def train_model(params, t_dataset, v_dataset):
     torch.set_num_threads(2)
     
     # create the optimizer
-    optimizer = optim.SGD(model.parameters(), lr=lr)
+    # optimizer = optim.SGD(model.parameters(), lr=lr)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # create the loss function
     criterion = nn.CrossEntropyLoss()
@@ -94,71 +83,47 @@ fashion_dataset = datasets.FashionMNIST(root='./data/fashion/',train=True, downl
 validation_dataset = datasets.FashionMNIST(root='./data/fashion/',train=False, download=True, transform=transformer)
 
 # define the parameters for the different configurations
+""" "conf_1": { # base configuration
+        "learning_rate": 0.001,
+        "dropout": 0.2,
+        "n1": 128,
+        "n2": 64,
+        "epochs": 60,
+        "batches_size": 100
+    },
+    "conf_2": { # higher learning rate 
+        "learning_rate": 0.01,
+        "dropout": 0.2,
+        "n1": 128,
+        "n2": 64,
+        "epochs": 60,
+        "batches_size": 100
+    },
+    "conf_3": { 
+        "learning_rate": 0.1,
+        "dropout": 0.2,
+        "n1": 128,
+        "n2": 64,
+        "epochs": 60,
+        "batches_size": 100
+    },
+    "conf_4": { 
+        "learning_rate": 0.01,
+        "dropout": 0.2,
+        "n1": 128,
+        "n2": 64,
+        "epochs": 60,
+        "batches_size": 100
+    }
+    """
 configurations = {
-    "conf_1": {
-        "learning_rate": 1e-3,
-        "dropout": 0.2,
-        "n1": 128,
-        "n2": 64,
-        "epochs": 30,
-        "batches_size": 100
-    },
-    "conf_2": {
-        "learning_rate": 1e-3,
+    "conf_5": { # base configuration with adam optimizer
+        "learning_rate": 0.001,
         "dropout": 0.2,
         "n1": 128,
         "n2": 64,
         "epochs": 60,
         "batches_size": 100
-    },
-    "conf_3": {
-        "learning_rate": 1e-3,
-        "dropout": 0.5,
-        "n1": 128,
-        "n2": 64,
-        "epochs": 60,
-        "batches_size": 100
-    },
-    "conf_4": {
-        "learning_rate": 1e-3,
-        "dropout": 0.5,
-        "n1": 256,
-        "n2": 128,
-        "epochs": 60,
-        "batches_size": 100
-    },
-    "conf_5": {
-        "learning_rate": 1e-3,
-        "dropout": 0.2,
-        "n1": 256,
-        "n2": 128,
-        "epochs": 60,
-        "batches_size": 100
-    },
-
-    "conf_6": {
-        "learning_rate": 0.005,
-        "dropout": 0.5,
-        "n1": 128,
-        "n2": 64,
-        "epochs": 60,
-        "batches_size": 100
-    },
-    "conf_7": {
-        "learning_rate": 0.005,
-        "dropout": 0.5,
-        "n1": 128,
-        "n2": 64,
-        "epochs": 60,
-        "batches_size": 60
-    },
-    "conf_8": {
-        "learning_rate": 0.005,
-        "dropout": 0.5,
-        "n1": 256,
-        "n2": 128,
-        "epochs": 60,
-        "batches_size": 60
     }
 }
 
